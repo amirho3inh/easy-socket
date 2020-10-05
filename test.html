@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <!-- Including jquery v3.2.1 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Including socket.io file v2.0.3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+
+</head>
+<body>
+
+
+
+<script>
+    var socket = io.connect('http://localhost:3000');
+
+    function EasySocket(option){
+        this.option = option;
+    }
+
+    EasySocket.prototype.getUsersList = function () {
+        socket.emit('getUsersList');
+    };
+
+    EasySocket.prototype.sendTOAll = function (data) {
+        socket.emit('sendTOAll', data);
+    };
+
+    EasySocket.prototype.receivedForAll = function (params = {}) {
+        if(this.option.hasOwnProperty('receivedForAllHolder')) {
+            window[this.option.receivedForAllHolder](params)
+        }
+    };
+
+    EasySocket.prototype.connectUser = function (params = {}) {
+        if(this.option.hasOwnProperty('connectHolder')) {
+            window[this.option.connectHolder](params)
+        }
+    };
+
+    socket.on('receivedForAll', function (data) {
+        easySocket.receivedForAll(data);
+    });
+    socket.on('connectUser', function (soketId) {
+        easySocket.connectUser(soketId)
+    });
+    socket.on('sendUsersList', function (data) {
+        console.log(data);
+    });
+
+
+
+
+
+
+    let option = {
+        receivedForAllHolder: 'receivedForAllTest',
+        connectHolder: 'connect'
+    }
+    const easySocket = new EasySocket(option);
+
+    easySocket.sendTOAll({id:12});
+    // easySocket.getUsersList();
+
+    function receivedForAllTest(data){
+        console.log(data);
+        console.log('**********');
+    }
+
+    function connect(data){
+        console.log(data);
+        console.log('**********Connect');
+    }
+
+
+
+</script>
+
+</body>
+</html>
